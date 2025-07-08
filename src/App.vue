@@ -6,7 +6,7 @@
           <span class="brand-icon">🍽️</span>
           <span class="brand-text">FoodieApp</span>
         </div>
-        
+
         <div class="nav-links">
           <router-link to="/home" class="nav-link">
             <span class="nav-icon">🏠</span>
@@ -16,26 +16,45 @@
             <span class="nav-icon">📋</span>
             Pemesanan
           </router-link>
-          <router-link to="/admin-menu" class="nav-link">
-            <span class="nav-icon">⚙️</span>
-            Kelola Menu
-          </router-link>
-          <router-link to="/users" class="nav-link">
-            <span class="nav-icon">👥</span>
-            Pengguna
-          </router-link>
-          <router-link to="/reports" class="nav-link">
-            <span class="nav-icon">📊</span>
-            Laporan
-          </router-link>
-          <router-link to="/login" class="nav-link login-btn">
+
+          <!-- Menu khusus admin -->
+          <template v-if="auth.user?.role === 'admin'">
+            <router-link to="/admin-menu" class="nav-link">
+              <span class="nav-icon">⚙️</span>
+              Kelola Menu
+            </router-link>
+            <router-link to="/users" class="nav-link">
+              <span class="nav-icon">👥</span>
+              Pengguna
+            </router-link>
+            <router-link to="/reports" class="nav-link">
+              <span class="nav-icon">📊</span>
+              Laporan
+            </router-link>
+          </template>
+
+          <!-- Login/Logout -->
+          <router-link
+            v-if="!auth.isLoggedIn"
+            to="/login"
+            class="nav-link login-btn"
+          >
             <span class="nav-icon">🔐</span>
             Login
           </router-link>
+
+          <button
+            v-else
+            class="nav-link login-btn"
+            @click="logout"
+          >
+            <span class="nav-icon">🚪</span>
+            Logout
+          </button>
         </div>
       </div>
     </nav>
-    
+
     <div class="divider"></div>
 
     <router-view />
@@ -43,8 +62,18 @@
 </template>
 
 <script setup>
-// Tidak perlu logic tambahan di sini untuk versi sederhana
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+const logout = () => {
+  auth.logout()
+  router.push('/login')
+}
 </script>
+
 
 <style scoped>
 * {
@@ -54,145 +83,103 @@
 }
 
 .navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #4a90e2;
   padding: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  height: 70px;
+  padding: 0 16px;
+  height: 60px;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: white;
+  gap: 8px;
+  color: #fff;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .brand-icon {
-  font-size: 2rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  font-size: 1.5rem;
 }
 
 .brand-text {
-  background: linear-gradient(45deg, #fff, #f0f0f0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #fff;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
+  gap: 6px;
+  padding: 8px 12px;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.9);
-  border-radius: 25px;
-  transition: all 0.3s ease;
-  font-weight: 500;
+  color: #fff;
+  border-radius: 6px;
+  transition: background 0.2s ease;
   font-size: 0.95rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.nav-link:hover::before {
-  left: 100%;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .nav-icon {
-  font-size: 1.1rem;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  font-size: 1rem;
 }
 
 .login-btn {
-  background: linear-gradient(45deg, #ff6b6b, #ffa500);
-  color: white !important;
-  margin-left: 10px;
-  box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+  background-color: #ff6b6b;
+  color: #fff !important;
 }
 
 .login-btn:hover {
-  background: linear-gradient(45deg, #ff5252, #ff9500);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+  background-color: #e85a5a;
 }
 
 .router-link-active {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.router-link-active.login-btn {
-  background: linear-gradient(45deg, #ff5252, #ff9500) !important;
+  background-color: rgba(255, 255, 255, 0.3);
+  font-weight: bold;
 }
 
 .divider {
-  height: 3px;
-  background: linear-gradient(90deg, #ff6b6b, #ffa500, #667eea, #764ba2);
-  opacity: 0.8;
+  height: 2px;
+  background-color: #ff6b6b;
+  opacity: 0.7;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .nav-container {
     flex-direction: column;
-    height: auto;
-    padding: 15px 20px;
-    gap: 15px;
+    align-items: flex-start;
+    padding: 10px 16px;
+    gap: 12px;
   }
-  
+
   .nav-links {
     flex-wrap: wrap;
-    justify-content: center;
     gap: 8px;
   }
-  
+
   .nav-link {
     font-size: 0.9rem;
-    padding: 10px 15px;
-  }
-  
-  .brand-text {
-    font-size: 1.1rem;
+    padding: 6px 10px;
   }
 }
 
@@ -200,18 +187,17 @@
   .nav-links {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
     width: 100%;
+    gap: 8px;
   }
-  
+
   .nav-link {
     justify-content: center;
-    text-align: center;
   }
-  
+
   .login-btn {
     grid-column: span 2;
-    margin-left: 0;
   }
 }
+
 </style>

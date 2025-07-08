@@ -8,6 +8,13 @@ import Users from '../views/Users.vue'
 import Reports from '../views/Reports.vue'
 
 const routes = [
+   { path: '/', redirect: '/login' },
+  { path: '/login', component: Login },
+  {
+    path: '/menu',
+    component: Menu,
+    meta: { requiresAuth: true }
+  },
   { path: '/home', name: 'Home', component: Home },
   { path: '/menu', name: 'Menu', component: Menu },
   { path: '/orders', name: 'Orders', component: Orders },
@@ -25,6 +32,18 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn')
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next('/login')
+  } else if (to.path === '/login' && isLoggedIn) {
+    next('/menu')
+  } else {
+    next()
+  }
 })
 
 export default router

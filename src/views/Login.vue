@@ -77,21 +77,6 @@
           </span>
         </button>
         
-        <div class="divider">
-          <span>atau</span>
-        </div>
-        
-        <div class="social-login">
-          <button type="button" class="social-btn google-btn">
-            <span class="social-icon">🔍</span>
-            Masuk dengan Google
-          </button>
-          <button type="button" class="social-btn facebook-btn">
-            <span class="social-icon">📘</span>
-            Masuk dengan Facebook
-          </button>
-        </div>
-        
         <div class="signup-link">
           <p>Belum punya akun? <a href="#" class="signup-btn">Daftar sekarang</a></p>
         </div>
@@ -102,6 +87,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const email = ref('')
 const password = ref('')
@@ -111,16 +98,29 @@ const isEmailFocused = ref(false)
 const isPasswordFocused = ref(false)
 const isLoading = ref(false)
 
-const login = () => {
+const router = useRouter()
+const auth = useAuthStore()
+
+const login = async () => {
   isLoading.value = true
-  
-  // Simulate API call
+
   setTimeout(() => {
-    alert(`Login dengan email: ${email.value}`)
+    const success = auth.login(email.value, password.value)
     isLoading.value = false
-  }, 2000)
+
+    if (success) {
+      if (auth.user.role === 'admin') {
+        router.push('/admin-menu')
+      } else {
+        router.push('/home')
+      }
+    } else {
+      alert('Email atau password salah!')
+    }
+  }, 1000)
 }
 </script>
+
 
 <style scoped>
 .login {
