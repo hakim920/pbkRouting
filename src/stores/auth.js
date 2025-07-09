@@ -1,33 +1,37 @@
-// src/stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
+  const isLoggedIn = computed(() => user.value !== null)
 
-  // Akun-akun simulasi
-  const users = [
-    {
-      email: 'admin@foodie.com',
-      password: 'admin123',
-      role: 'admin'
-    },
-    {
-      email: 'user@foodie.com',
-      password: 'user123',
-      role: 'user'
-    }
-  ]
+  // Ganti URL ini jika port json-server kamu beda
+  const apiURL = 'http://localhost:10000/user'
+  const setUser = (data) => {
+  user.value = data
+}
 
-  const login = (email, password) => {
-    const found = users.find(u => u.email === email && u.password === password)
-    if (found) {
-      user.value = {
-        email: found.email,
-        role: found.role
+  const login = async (email, password) => {
+    try {
+      const response = await axios.get(apiURL)
+      const users = response.data
+
+
+      const found = users.find(u => u.username === email && u.password === password)
+      if (found) {
+        user.value = {
+          id: found.id,
+          email: found.username,
+          password: found.password,
+          role: found.role || 'user' // Default ke "user" jika tidak ada role
+        }
+        return true
+      } else {
+        return false
       }
-      return true
-    } else {
+    } catch (error) {
+      console.error('Login error:', error)
       return false
     }
   }
@@ -36,14 +40,12 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
   }
 
-  const isLoggedIn = computed(() => user.value !== null)
-  const getAllUsers = computed(() => users)
-
-return {
+  return {
   user,
   isLoggedIn,
   login,
   logout,
-  getAllUsers
+  setUser
 }
+
 })

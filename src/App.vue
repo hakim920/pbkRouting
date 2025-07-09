@@ -43,14 +43,15 @@
             Login
           </router-link>
 
-          <button
-            v-else
+          <button 
+            v-else 
+            @click="logout" 
             class="nav-link login-btn"
-            @click="logout"
           >
             <span class="nav-icon">🚪</span>
             Logout
           </button>
+
         </div>
       </div>
     </nav>

@@ -9,7 +9,7 @@
         <h1>Selamat Datang Kembali!</h1>
         <p class="subtitle">Masuk untuk melanjutkan petualangan kuliner Anda</p>
       </div>
-      
+
       <form @submit.prevent="login" class="login-form">
         <div class="form-group">
           <label for="email">
@@ -30,7 +30,7 @@
             <span class="input-icon">👤</span>
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="password">
             <span class="label-icon">🔒</span>
@@ -56,7 +56,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="form-options">
           <label class="remember-me">
             <input type="checkbox" v-model="rememberMe">
@@ -65,7 +65,7 @@
           </label>
           <a href="#" class="forgot-password">Lupa password?</a>
         </div>
-        
+
         <button type="submit" class="login-btn" :class="{ 'btn-loading': isLoading }">
           <span v-if="!isLoading" class="btn-content">
             <span class="btn-icon">🚀</span>
@@ -76,7 +76,7 @@
             Memproses...
           </span>
         </button>
-        
+
         <div class="signup-link">
           <p>Belum punya akun? <a href="#" class="signup-btn">Daftar sekarang</a></p>
         </div>
@@ -87,6 +87,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -103,13 +104,22 @@ const auth = useAuthStore()
 
 const login = async () => {
   isLoading.value = true
+  try {
+    const res = await axios.get('http://localhost:10000/user') 
+    const userData = res.data.find(
+      u => u.username === email.value && u.password === password.value
+    )
 
-  setTimeout(() => {
-    const success = auth.login(email.value, password.value)
-    isLoading.value = false
+    if (userData) {
+      // role-nya bisa "admin" atau default ke "user"
+      auth.setUser({
+        username: userData.username,
+        password: userData.password,
+        role: userData.role || 'user'
+      })
 
-    if (success) {
-      if (auth.user.role === 'admin') {
+      // Arahkan berdasarkan role
+      if (userData.role === 'admin') {
         router.push('/admin-menu')
       } else {
         router.push('/home')
@@ -117,8 +127,14 @@ const login = async () => {
     } else {
       alert('Email atau password salah!')
     }
-  }, 1000)
+  } catch (err) {
+    alert('Terjadi kesalahan koneksi ke server!')
+    console.error(err)
+  } finally {
+    isLoading.value = false
+  }
 }
+
 </script>
 
 

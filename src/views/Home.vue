@@ -4,10 +4,14 @@
       <h1>🍽️ Selamat Datang!</h1>
       <p>Aplikasi pemesanan makanan favoritmu!</p>
       <p class="highlight">Lihat menu, pesan makanan lezat, atau login untuk fitur lengkap.</p>
-      <button class="cta-button">Lihat Menu</button>
+      
+      <router-link to="/menu">
+        <button class="cta-button">Lihat Menu</button>
+      </router-link>
     </div>
   </div>
 </template>
+
 
 <script setup>
 // Tidak perlu script untuk halaman ini

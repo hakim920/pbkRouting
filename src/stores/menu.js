@@ -4,12 +4,20 @@ import axios from 'axios'
 
 export const useMenuStore = defineStore('menu', {
   state: () => ({
-    menuList: []
+    menuList: [],
+    orders: []
   }),
   actions: {
     async fetchMenu() {
-      const res = await axios.get('http://localhost:10000/menu')
-      this.menuList = res.data
+      try {
+        const res = await axios.get('http://localhost:10000/menu')
+        this.menuList = res.data
+      } catch (err) {
+        console.error('Gagal fetch menu:', err)
+      }
+    },
+    addOrder(item) {
+      this.orders.push(item)
     }
   }
 })
