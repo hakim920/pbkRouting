@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => user.value !== null)
 
   // Ganti URL ini jika port json-server kamu beda
-  const apiURL = 'http://localhost:10000/user'
+  const apiURL = 'https://7dbb3108-9e33-4885-835e-7a34bc4cf886-00-25zlxpj3v95i3.sisko.replit.dev/user'
   const setUser = (data) => {
   user.value = data
 }

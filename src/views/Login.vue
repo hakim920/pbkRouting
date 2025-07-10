@@ -105,7 +105,7 @@ const auth = useAuthStore()
 const login = async () => {
   isLoading.value = true
   try {
-    const res = await axios.get('http://localhost:10000/user') 
+    const res = await axios.get('https://7dbb3108-9e33-4885-835e-7a34bc4cf886-00-25zlxpj3v95i3.sisko.replit.dev/user') 
     const userData = res.data.find(
       u => u.username === email.value && u.password === password.value
     )

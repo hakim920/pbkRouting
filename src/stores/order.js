@@ -13,7 +13,7 @@ export const useOrderStore = defineStore('order', {
       this.loading = true
       this.error = null
       try {
-        const response = await axios.get('http://localhost:10000/orders')
+        const response = await axios.get('https://7dbb3108-9e33-4885-835e-7a34bc4cf886-00-25zlxpj3v95i3.sisko.replit.dev/orders')
         this.orders = response.data
       } catch (err) {
         this.error = 'Gagal mengambil data pesanan'
